@@ -1,0 +1,379 @@
+{
+  "_note": "expected = what the pipeline should do; use it to tune thresholds, never feed it to the model",
+  "messages": [
+    {
+      "building": "alderwick-court",
+      "flat": "9",
+      "minutes_ago": 1500,
+      "body": "Can I install an EV charger in my parking space?",
+      "expected": {
+        "category": "parking",
+        "is_question": true,
+        "no_source": true
+      }
+    },
+    {
+      "building": "alderwick-court",
+      "flat": "40",
+      "minutes_ago": 900,
+      "body": "Are electric car chargers allowed in the car park? I'd pay for it myself",
+      "expected": {
+        "category": "parking",
+        "is_question": true,
+        "no_source": true
+      }
+    },
+    {
+      "building": "harbrook-wharf",
+      "flat": "6",
+      "minutes_ago": 800,
+      "body": "Why has my service charge gone up this year?",
+      "expected": {
+        "category": "service_charge",
+        "is_question": true,
+        "answer_doc": "Service charge budget 2026"
+      }
+    },
+    {
+      "building": "alderwick-court",
+      "flat": "2",
+      "minutes_ago": 700,
+      "body": "Bins in the bin store are overflowing",
+      "expected": {
+        "category": "bins",
+        "incident": null,
+        "note": "same words as Harbrook Wharf, different building: must not group across"
+      }
+    },
+    {
+      "building": "alderwick-court",
+      "flat": "33",
+      "minutes_ago": 600,
+      "body": "The light in the 4th floor stairwell is out",
+      "expected": {
+        "category": "other",
+        "incident": null
+      }
+    },
+    {
+      "building": "harbrook-wharf",
+      "flat": "12",
+      "minutes_ago": 500,
+      "body": "Can I paint my front door a different colour?",
+      "expected": {
+        "category": "building_rules",
+        "is_question": true,
+        "answer_doc": "House rules"
+      }
+    },
+    {
+      "building": "alderwick-court",
+      "flat": "9",
+      "minutes_ago": 400,
+      "body": "Really loud music from flat 10 until 2am last night, third time this month",
+      "expected": {
+        "category": "noise",
+        "incident": null
+      }
+    },
+    {
+      "building": "alderwick-court",
+      "flat": "17",
+      "minutes_ago": 300,
+      "body": "Who do I ask about getting an EV charging point put in?",
+      "expected": {
+        "category": "parking",
+        "is_question": true,
+        "no_source": true
+      }
+    },
+    {
+      "building": "alderwick-court",
+      "flat": "45",
+      "minutes_ago": 240,
+      "body": "Am I allowed to have a barbecue on my balcony?",
+      "expected": {
+        "category": "building_rules",
+        "is_question": true,
+        "answer_doc": "House rules"
+      }
+    },
+    {
+      "building": "alderwick-court",
+      "flat": "6",
+      "minutes_ago": 200,
+      "body": "What time can I do DIY / drilling at the weekend?",
+      "expected": {
+        "category": "building_rules",
+        "is_question": true,
+        "answer_doc": "House rules"
+      }
+    },
+    {
+      "building": "alderwick-court",
+      "flat": "28",
+      "minutes_ago": 180,
+      "body": "Where do I pick up my parcels and how long are they kept?",
+      "expected": {
+        "category": "parcels",
+        "is_question": true,
+        "answer_doc": "House rules"
+      }
+    },
+    {
+      "building": "alderwick-court",
+      "flat": "11",
+      "minutes_ago": 160,
+      "body": "Can my cleaner have a key fob?",
+      "expected": {
+        "category": "security",
+        "is_question": true,
+        "answer_doc": "House rules"
+      }
+    },
+    {
+      "building": "harbrook-wharf",
+      "flat": "4",
+      "minutes_ago": 120,
+      "body": "The bins haven't been collected this week and it's starting to smell",
+      "expected": {
+        "category": "bins",
+        "incident": "hw-bins"
+      }
+    },
+    {
+      "building": "harbrook-wharf",
+      "flat": "11",
+      "minutes_ago": 95,
+      "body": "Bin store is full, collection missed?",
+      "expected": {
+        "category": "bins",
+        "incident": "hw-bins"
+      }
+    },
+    {
+      "building": "alderwick-court",
+      "flat": "14",
+      "minutes_ago": 90,
+      "body": "Hi, the lift isn't working this morning. Is someone coming to fix it?",
+      "expected": {
+        "category": "lift",
+        "incident": "lift-outage"
+      }
+    },
+    {
+      "building": "alderwick-court",
+      "flat": "3",
+      "minutes_ago": 86,
+      "body": "Lift is out of order again",
+      "expected": {
+        "category": "lift",
+        "incident": "lift-outage"
+      }
+    },
+    {
+      "building": "alderwick-court",
+      "flat": "27",
+      "minutes_ago": 83,
+      "body": "Lift not working - I'm on the 3rd floor with a pram, really difficult",
+      "expected": {
+        "category": "lift",
+        "incident": "lift-outage"
+      }
+    },
+    {
+      "building": "alderwick-court",
+      "flat": "41",
+      "minutes_ago": 80,
+      "body": "is anyone fixing the lift?? been broken since at least 8",
+      "expected": {
+        "category": "lift",
+        "incident": "lift-outage"
+      }
+    },
+    {
+      "building": "alderwick-court",
+      "flat": "19",
+      "minutes_ago": 76,
+      "body": "The lift doors won't open on any floor. Just wanted to report it.",
+      "expected": {
+        "category": "lift",
+        "incident": "lift-outage"
+      }
+    },
+    {
+      "building": "alderwick-court",
+      "flat": "35",
+      "minutes_ago": 72,
+      "body": "Lift dead. My mum uses a wheelchair and is visiting today, how long will it be?",
+      "expected": {
+        "category": "lift",
+        "incident": "lift-outage"
+      }
+    },
+    {
+      "building": "alderwick-court",
+      "flat": "5",
+      "minutes_ago": 70,
+      "body": "The main entrance door on the ground floor isn't closing properly, it's just swinging open",
+      "expected": {
+        "category": "door_entry",
+        "incident": null,
+        "note": "must NOT join the lift incident"
+      }
+    },
+    {
+      "building": "alderwick-court",
+      "flat": "8",
+      "minutes_ago": 65,
+      "body": "Hello, the lift seems to be broken, there's no light on the button",
+      "expected": {
+        "category": "lift",
+        "incident": "lift-outage"
+      }
+    },
+    {
+      "building": "harbrook-wharf",
+      "flat": "17",
+      "minutes_ago": 60,
+      "body": "Bins not collected again, there are bags on the floor now",
+      "expected": {
+        "category": "bins",
+        "incident": "hw-bins"
+      }
+    },
+    {
+      "building": "alderwick-court",
+      "flat": "46",
+      "minutes_ago": 58,
+      "body": "Still no lift?? Any update please",
+      "expected": {
+        "category": "lift",
+        "incident": "lift-outage"
+      }
+    },
+    {
+      "building": "alderwick-court",
+      "flat": "22",
+      "minutes_ago": 50,
+      "body": "Lift broken, have a big delivery coming at 2pm, will it be fixed by then?",
+      "expected": {
+        "category": "lift",
+        "incident": "lift-outage"
+      }
+    },
+    {
+      "building": "harbrook-wharf",
+      "flat": "8",
+      "minutes_ago": 45,
+      "body": "No heating or hot water in my flat since last night",
+      "expected": {
+        "category": "heating",
+        "incident": "hw-heating"
+      }
+    },
+    {
+      "building": "alderwick-court",
+      "flat": "30",
+      "minutes_ago": 41,
+      "body": "Reporting the lift is not working",
+      "expected": {
+        "category": "lift",
+        "incident": "lift-outage"
+      }
+    },
+    {
+      "building": "harbrook-wharf",
+      "flat": "15",
+      "minutes_ago": 40,
+      "body": "Radiators are cold and no hot water, is it the whole building?",
+      "expected": {
+        "category": "heating",
+        "incident": "hw-heating"
+      }
+    },
+    {
+      "building": "alderwick-court",
+      "flat": "12",
+      "minutes_ago": 33,
+      "body": "Is the lift being repaired today? I have a bad knee",
+      "expected": {
+        "category": "lift",
+        "incident": "lift-outage"
+      }
+    },
+    {
+      "building": "harbrook-wharf",
+      "flat": "20",
+      "minutes_ago": 30,
+      "body": "Heating's off in flat 20, my baby is 3 months old, please can someone look",
+      "expected": {
+        "category": "heating",
+        "urgency": "high",
+        "incident": "hw-heating"
+      }
+    },
+    {
+      "building": "harbrook-wharf",
+      "flat": "3",
+      "minutes_ago": 25,
+      "body": "Hot water not working",
+      "expected": {
+        "category": "heating",
+        "incident": "hw-heating"
+      }
+    },
+    {
+      "building": "alderwick-court",
+      "flat": "38",
+      "minutes_ago": 20,
+      "body": "lift still broken, nobody has told us anything",
+      "expected": {
+        "category": "lift",
+        "incident": "lift-outage"
+      }
+    },
+    {
+      "building": "alderwick-court",
+      "flat": "22",
+      "minutes_ago": 15,
+      "body": "Water is pouring through my ceiling from upstairs!! please help",
+      "expected": {
+        "category": "leak",
+        "urgency": "emergency",
+        "incident": "leak-floor2"
+      }
+    },
+    {
+      "building": "alderwick-court",
+      "flat": "21",
+      "minutes_ago": 12,
+      "body": "There's water dripping down the wall in the corridor outside flat 22",
+      "expected": {
+        "category": "leak",
+        "incident": "leak-floor2"
+      }
+    },
+    {
+      "building": "alderwick-court",
+      "flat": "30",
+      "minutes_ago": 10,
+      "body": "I think my bathroom pipe has burst, water everywhere on my floor, what do I do",
+      "expected": {
+        "category": "leak",
+        "urgency": "emergency",
+        "incident": "leak-floor2"
+      }
+    },
+    {
+      "building": "alderwick-court",
+      "flat": "14",
+      "minutes_ago": 9,
+      "body": "Corridor ceiling on floor 2 has a big wet patch and it's spreading",
+      "expected": {
+        "category": "leak",
+        "incident": "leak-floor2"
+      }
+    }
+  ]
+}

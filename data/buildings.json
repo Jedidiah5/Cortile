@@ -1,0 +1,598 @@
+{
+  "buildings": [
+    {
+      "slug": "alderwick-court",
+      "name": "Alderwick Court",
+      "manager_name": "Priya",
+      "units": [
+        {
+          "flat_no": "1",
+          "floor": 0
+        },
+        {
+          "flat_no": "2",
+          "floor": 0
+        },
+        {
+          "flat_no": "3",
+          "floor": 0
+        },
+        {
+          "flat_no": "4",
+          "floor": 0
+        },
+        {
+          "flat_no": "5",
+          "floor": 0
+        },
+        {
+          "flat_no": "6",
+          "floor": 0
+        },
+        {
+          "flat_no": "7",
+          "floor": 0
+        },
+        {
+          "flat_no": "8",
+          "floor": 0
+        },
+        {
+          "flat_no": "9",
+          "floor": 1
+        },
+        {
+          "flat_no": "10",
+          "floor": 1
+        },
+        {
+          "flat_no": "11",
+          "floor": 1
+        },
+        {
+          "flat_no": "12",
+          "floor": 1
+        },
+        {
+          "flat_no": "13",
+          "floor": 1
+        },
+        {
+          "flat_no": "14",
+          "floor": 1
+        },
+        {
+          "flat_no": "15",
+          "floor": 1
+        },
+        {
+          "flat_no": "16",
+          "floor": 1
+        },
+        {
+          "flat_no": "17",
+          "floor": 2
+        },
+        {
+          "flat_no": "18",
+          "floor": 2
+        },
+        {
+          "flat_no": "19",
+          "floor": 2
+        },
+        {
+          "flat_no": "20",
+          "floor": 2
+        },
+        {
+          "flat_no": "21",
+          "floor": 2
+        },
+        {
+          "flat_no": "22",
+          "floor": 2
+        },
+        {
+          "flat_no": "23",
+          "floor": 2
+        },
+        {
+          "flat_no": "24",
+          "floor": 2
+        },
+        {
+          "flat_no": "25",
+          "floor": 3
+        },
+        {
+          "flat_no": "26",
+          "floor": 3
+        },
+        {
+          "flat_no": "27",
+          "floor": 3
+        },
+        {
+          "flat_no": "28",
+          "floor": 3
+        },
+        {
+          "flat_no": "29",
+          "floor": 3
+        },
+        {
+          "flat_no": "30",
+          "floor": 3
+        },
+        {
+          "flat_no": "31",
+          "floor": 3
+        },
+        {
+          "flat_no": "32",
+          "floor": 3
+        },
+        {
+          "flat_no": "33",
+          "floor": 4
+        },
+        {
+          "flat_no": "34",
+          "floor": 4
+        },
+        {
+          "flat_no": "35",
+          "floor": 4
+        },
+        {
+          "flat_no": "36",
+          "floor": 4
+        },
+        {
+          "flat_no": "37",
+          "floor": 4
+        },
+        {
+          "flat_no": "38",
+          "floor": 4
+        },
+        {
+          "flat_no": "39",
+          "floor": 4
+        },
+        {
+          "flat_no": "40",
+          "floor": 4
+        },
+        {
+          "flat_no": "41",
+          "floor": 5
+        },
+        {
+          "flat_no": "42",
+          "floor": 5
+        },
+        {
+          "flat_no": "43",
+          "floor": 5
+        },
+        {
+          "flat_no": "44",
+          "floor": 5
+        },
+        {
+          "flat_no": "45",
+          "floor": 5
+        },
+        {
+          "flat_no": "46",
+          "floor": 5
+        },
+        {
+          "flat_no": "47",
+          "floor": 5
+        },
+        {
+          "flat_no": "48",
+          "floor": 5
+        }
+      ],
+      "residents": [
+        {
+          "flat_no": "1",
+          "name": "Amara Okafor"
+        },
+        {
+          "flat_no": "2",
+          "name": "Amara Evans"
+        },
+        {
+          "flat_no": "3",
+          "name": "Ben Patel"
+        },
+        {
+          "flat_no": "4",
+          "name": "Ben Walsh"
+        },
+        {
+          "flat_no": "5",
+          "name": "Chloe Khan"
+        },
+        {
+          "flat_no": "6",
+          "name": "Chloe Ward"
+        },
+        {
+          "flat_no": "7",
+          "name": "Daniel Clarke"
+        },
+        {
+          "flat_no": "8",
+          "name": "Daniel Grant"
+        },
+        {
+          "flat_no": "9",
+          "name": "Ella Reid"
+        },
+        {
+          "flat_no": "10",
+          "name": "Ella Mensah"
+        },
+        {
+          "flat_no": "11",
+          "name": "Femi Singh"
+        },
+        {
+          "flat_no": "12",
+          "name": "Grace Hughes"
+        },
+        {
+          "flat_no": "13",
+          "name": "Grace Bello"
+        },
+        {
+          "flat_no": "14",
+          "name": "Hassan Murphy"
+        },
+        {
+          "flat_no": "15",
+          "name": "Hassan Chen"
+        },
+        {
+          "flat_no": "16",
+          "name": "Isla Adeyemi"
+        },
+        {
+          "flat_no": "17",
+          "name": "Isla Ahmed"
+        },
+        {
+          "flat_no": "18",
+          "name": "James Novak"
+        },
+        {
+          "flat_no": "19",
+          "name": "James Shaw"
+        },
+        {
+          "flat_no": "20",
+          "name": "Kemi Lewis"
+        },
+        {
+          "flat_no": "21",
+          "name": "Leo Okafor"
+        },
+        {
+          "flat_no": "22",
+          "name": "Leo Evans"
+        },
+        {
+          "flat_no": "23",
+          "name": "Maya Patel"
+        },
+        {
+          "flat_no": "24",
+          "name": "Maya Walsh"
+        },
+        {
+          "flat_no": "25",
+          "name": "Nikhil Khan"
+        },
+        {
+          "flat_no": "26",
+          "name": "Nikhil Ward"
+        },
+        {
+          "flat_no": "27",
+          "name": "Olivia Clarke"
+        },
+        {
+          "flat_no": "28",
+          "name": "Olivia Grant"
+        },
+        {
+          "flat_no": "29",
+          "name": "Priyanka Reid"
+        },
+        {
+          "flat_no": "30",
+          "name": "Priyanka Mensah"
+        },
+        {
+          "flat_no": "31",
+          "name": "Quinn Singh"
+        },
+        {
+          "flat_no": "32",
+          "name": "Rosa Hughes"
+        },
+        {
+          "flat_no": "33",
+          "name": "Rosa Bello"
+        },
+        {
+          "flat_no": "34",
+          "name": "Sam Murphy"
+        },
+        {
+          "flat_no": "35",
+          "name": "Sam Chen"
+        },
+        {
+          "flat_no": "36",
+          "name": "Tola Adeyemi"
+        },
+        {
+          "flat_no": "37",
+          "name": "Tola Ahmed"
+        },
+        {
+          "flat_no": "38",
+          "name": "Uma Novak"
+        },
+        {
+          "flat_no": "39",
+          "name": "Uma Shaw"
+        },
+        {
+          "flat_no": "40",
+          "name": "Victor Lewis"
+        },
+        {
+          "flat_no": "41",
+          "name": "Wren Okafor"
+        },
+        {
+          "flat_no": "42",
+          "name": "Wren Evans"
+        },
+        {
+          "flat_no": "43",
+          "name": "Yusuf Patel"
+        },
+        {
+          "flat_no": "44",
+          "name": "Yusuf Walsh"
+        },
+        {
+          "flat_no": "45",
+          "name": "Zara Khan"
+        },
+        {
+          "flat_no": "46",
+          "name": "Zara Ward"
+        },
+        {
+          "flat_no": "47",
+          "name": "Aisha Clarke"
+        },
+        {
+          "flat_no": "48",
+          "name": "Aisha Grant"
+        }
+      ]
+    },
+    {
+      "slug": "harbrook-wharf",
+      "name": "Harbrook Wharf",
+      "manager_name": "Tom",
+      "units": [
+        {
+          "flat_no": "1",
+          "floor": 0
+        },
+        {
+          "flat_no": "2",
+          "floor": 0
+        },
+        {
+          "flat_no": "3",
+          "floor": 0
+        },
+        {
+          "flat_no": "4",
+          "floor": 0
+        },
+        {
+          "flat_no": "5",
+          "floor": 0
+        },
+        {
+          "flat_no": "6",
+          "floor": 0
+        },
+        {
+          "flat_no": "7",
+          "floor": 1
+        },
+        {
+          "flat_no": "8",
+          "floor": 1
+        },
+        {
+          "flat_no": "9",
+          "floor": 1
+        },
+        {
+          "flat_no": "10",
+          "floor": 1
+        },
+        {
+          "flat_no": "11",
+          "floor": 1
+        },
+        {
+          "flat_no": "12",
+          "floor": 1
+        },
+        {
+          "flat_no": "13",
+          "floor": 2
+        },
+        {
+          "flat_no": "14",
+          "floor": 2
+        },
+        {
+          "flat_no": "15",
+          "floor": 2
+        },
+        {
+          "flat_no": "16",
+          "floor": 2
+        },
+        {
+          "flat_no": "17",
+          "floor": 2
+        },
+        {
+          "flat_no": "18",
+          "floor": 2
+        },
+        {
+          "flat_no": "19",
+          "floor": 3
+        },
+        {
+          "flat_no": "20",
+          "floor": 3
+        },
+        {
+          "flat_no": "21",
+          "floor": 3
+        },
+        {
+          "flat_no": "22",
+          "floor": 3
+        },
+        {
+          "flat_no": "23",
+          "floor": 3
+        },
+        {
+          "flat_no": "24",
+          "floor": 3
+        }
+      ],
+      "residents": [
+        {
+          "flat_no": "1",
+          "name": "Callum Reid"
+        },
+        {
+          "flat_no": "2",
+          "name": "Callum Mensah"
+        },
+        {
+          "flat_no": "3",
+          "name": "Dev Singh"
+        },
+        {
+          "flat_no": "4",
+          "name": "Erin Hughes"
+        },
+        {
+          "flat_no": "5",
+          "name": "Erin Bello"
+        },
+        {
+          "flat_no": "6",
+          "name": "Farah Murphy"
+        },
+        {
+          "flat_no": "7",
+          "name": "Farah Chen"
+        },
+        {
+          "flat_no": "8",
+          "name": "George Adeyemi"
+        },
+        {
+          "flat_no": "9",
+          "name": "George Ahmed"
+        },
+        {
+          "flat_no": "10",
+          "name": "Hana Novak"
+        },
+        {
+          "flat_no": "11",
+          "name": "Hana Shaw"
+        },
+        {
+          "flat_no": "12",
+          "name": "Ivan Lewis"
+        },
+        {
+          "flat_no": "13",
+          "name": "Jade Okafor"
+        },
+        {
+          "flat_no": "14",
+          "name": "Jade Evans"
+        },
+        {
+          "flat_no": "15",
+          "name": "Kofi Patel"
+        },
+        {
+          "flat_no": "16",
+          "name": "Kofi Walsh"
+        },
+        {
+          "flat_no": "17",
+          "name": "Lucy Khan"
+        },
+        {
+          "flat_no": "18",
+          "name": "Lucy Ward"
+        },
+        {
+          "flat_no": "19",
+          "name": "Marcus Clarke"
+        },
+        {
+          "flat_no": "20",
+          "name": "Marcus Grant"
+        },
+        {
+          "flat_no": "21",
+          "name": "Nadia Reid"
+        },
+        {
+          "flat_no": "22",
+          "name": "Nadia Mensah"
+        },
+        {
+          "flat_no": "23",
+          "name": "Omar Singh"
+        },
+        {
+          "flat_no": "24",
+          "name": "Poppy Hughes"
+        }
+      ]
+    }
+  ]
+}

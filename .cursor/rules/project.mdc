@@ -1,0 +1,17 @@
+---
+description: Rules for the Incidents for Cortile prototype
+globs: **/*
+alwaysApply: true
+---
+
+- Read BUILD_BRIEF.md before starting any phase. Build one phase at a time and confirm its "Done when" checks.
+- TypeScript strict. No `any`. Server-only code (Supabase service key, Anthropic, Voyage) never imported into client components.
+- Every Supabase query on messages, incidents, documents, doc_chunks, updates or unanswered_questions MUST filter by building_id (directly or via a join).
+- Every model response is parsed with the Zod schemas in src/lib/ai/schemas.ts. On parse failure: retry once, then fall back safely. Never throw to the user, never drop a message.
+- Use the prompts in src/lib/ai/prompts.ts as written. Do not add new AI steps.
+- Emergency detection runs in code (isEmergencyText) before any AI call; urgency = maxUrgency(code, model).
+- Drafts: verify every citation quote appears in its chunk (normalise whitespace + case). No valid citations = no draft.
+- Nothing reaches residents without manager approval.
+- Log every AI call to ai_events (step, input, output, ok).
+- Keep src/lib/pipeline free of React/UI imports.
+- Prefer small, readable functions. Tailwind for styling; calm neutral palette, one accent colour.
