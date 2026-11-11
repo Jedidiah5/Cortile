@@ -1,9 +1,8 @@
 /**
  * Pipeline entry point. Wired in Phases 3–5.
  * Seed --process and POST /api/messages call this.
+ * Phase 2: no-op so messages still land in the inbox as status='new'.
  */
 export async function processMessage(_messageId: string): Promise<void> {
-  throw new Error(
-    "Pipeline not implemented yet — complete Phases 3–4, then re-run seed with --process.",
-  );
+  // Triage + grouping land in Phases 3–4.
 }

@@ -169,7 +169,14 @@ async function seedDocuments(
   dataDir: string,
 ): Promise<number> {
   const docsRoot = path.join(dataDir, "documents");
-  let chunkCount = 0;
+
+  // Collect all chunks first, then embed in one Voyage call (avoids 3 RPM free-tier limit).
+  const pending: {
+    document_id: string;
+    building_id: string;
+    section: string;
+    text: string;
+  }[] = [];
 
   for (const [slug, buildingId] of slugToId) {
     const dir = path.join(docsRoot, slug);
@@ -198,25 +205,33 @@ async function seedDocuments(
       if (error || !doc) throw new Error(`document ${file}: ${error?.message}`);
 
       const sections = chunkBySection(markdown);
-      const embeddings = await embed(sections.map((s) => s.text));
-
-      const rows = sections.map((s, i) => ({
-        document_id: doc.id,
-        building_id: buildingId,
-        section: s.section,
-        text: s.text,
-        embedding: embeddings[i],
-      }));
-
-      const { error: cErr } = await supabase.from("doc_chunks").insert(rows);
-      if (cErr) throw new Error(`chunks ${file}: ${cErr.message}`);
-
-      chunkCount += rows.length;
-      console.log(`  ${slug}/${file}: ${rows.length} chunks`);
+      for (const s of sections) {
+        pending.push({
+          document_id: doc.id,
+          building_id: buildingId,
+          section: s.section,
+          text: s.text,
+        });
+      }
+      console.log(`  ${slug}/${file}: ${sections.length} sections queued`);
     }
   }
 
-  return chunkCount;
+  console.log(`  Embedding ${pending.length} chunks in one Voyage request…`);
+  const embeddings = await embed(pending.map((p) => p.text));
+
+  const rows = pending.map((p, i) => ({
+    document_id: p.document_id,
+    building_id: p.building_id,
+    section: p.section,
+    text: p.text,
+    embedding: embeddings[i],
+  }));
+
+  const { error: cErr } = await supabase.from("doc_chunks").insert(rows);
+  if (cErr) throw new Error(`chunks insert: ${cErr.message}`);
+
+  return rows.length;
 }
 
 async function seedMessages(
