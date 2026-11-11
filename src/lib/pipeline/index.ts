@@ -1,8 +1,24 @@
+import { createServiceClient } from "@/lib/supabase/server";
+import { triageMessage } from "@/lib/pipeline/triage";
+
 /**
- * Pipeline entry point. Wired in Phases 3–5.
- * Seed --process and POST /api/messages call this.
- * Phase 2: no-op so messages still land in the inbox as status='new'.
+ * Pipeline entry point. Seed --process and POST /api/messages call this.
+ * Phase 3: triage (+ embed). Grouping lands in Phase 4.
  */
-export async function processMessage(_messageId: string): Promise<void> {
-  // Triage + grouping land in Phases 3–4.
+export async function processMessage(messageId: string): Promise<void> {
+  const supabase = createServiceClient();
+
+  const { data: message, error } = await supabase
+    .from("messages")
+    .select("id, building_id, body, flat, status")
+    .eq("id", messageId)
+    .maybeSingle();
+
+  if (error || !message) {
+    console.warn("processMessage: message not found", messageId, error?.message);
+    return;
+  }
+
+  // Never lose the message — triage failures are handled inside triageMessage.
+  await triageMessage(supabase, message);
 }

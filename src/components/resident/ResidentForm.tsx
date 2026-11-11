@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import type { Building } from "@/lib/data/inbox";
 
 type UnitOption = { flat_no: string; resident_name: string };
@@ -19,6 +20,7 @@ export function ResidentForm({
   const [error, setError] = useState<string | null>(null);
   const [ok, setOk] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const router = useRouter();
 
   function onBuildingChange(next: string) {
     setSlug(next);
@@ -39,13 +41,21 @@ export function ResidentForm({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ building_slug: slug, flat, body }),
         });
-        const data = (await res.json()) as { error?: string; message?: { id: string } };
+        const data = (await res.json()) as {
+          error?: string;
+          message?: { id: string; category?: string; urgency?: string };
+        };
         if (!res.ok) {
           setError(data.error ?? "Failed to send");
           return;
         }
-        setOk(`Sent. Message id ${data.message?.id ?? ""}`);
+        const chips = [data.message?.category, data.message?.urgency]
+          .filter(Boolean)
+          .join(" · ");
+        setOk(chips ? `Sent — ${chips}. Opening inbox…` : "Sent. Opening inbox…");
         setBody("");
+        router.push(`/inbox?building=${encodeURIComponent(slug)}`);
+        router.refresh();
       } catch {
         setError("Network error");
       }

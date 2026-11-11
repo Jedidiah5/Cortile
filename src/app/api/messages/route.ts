@@ -77,12 +77,21 @@ export async function POST(req: Request) {
     );
   }
 
-  // Pipeline is wired in Phase 3+; never drop the message if it fails.
+  // Never drop the message if the pipeline fails.
   try {
     await processMessage(message.id);
   } catch (err) {
     console.warn("processMessage:", err instanceof Error ? err.message : err);
   }
 
-  return NextResponse.json({ message }, { status: 201 });
+  const { data: updated } = await supabase
+    .from("messages")
+    .select(
+      "id, building_id, created_at, status, category, urgency, flat, summary, is_question",
+    )
+    .eq("id", message.id)
+    .eq("building_id", building.id)
+    .single();
+
+  return NextResponse.json({ message: updated ?? message }, { status: 201 });
 }
