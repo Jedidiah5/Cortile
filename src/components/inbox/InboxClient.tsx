@@ -1,16 +1,24 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import type { Building, InboxData, InboxIncident, InboxMessage } from "@/lib/data/inbox";
 import { formatRelativeTime } from "@/lib/format";
 import { CategoryChip, StatusChip, UrgencyChip } from "@/components/ui/Chips";
 import { EmergencyBanner } from "@/components/inbox/EmergencyBanner";
+import { useInboxRealtime } from "@/hooks/useInboxRealtime";
 
 type Selection =
   | { kind: "incident"; id: string }
   | { kind: "message"; id: string }
   | null;
+
+function defaultSelection(d: InboxData | undefined): Selection {
+  if (!d) return null;
+  if (d.incidents[0]) return { kind: "incident", id: d.incidents[0].id };
+  if (d.conversations[0]) return { kind: "message", id: d.conversations[0].id };
+  return null;
+}
 
 export function InboxClient({
   buildings,
@@ -23,13 +31,36 @@ export function InboxClient({
 }) {
   const [slug, setSlug] = useState(initialSlug);
   const data = dataBySlug[slug];
-  const [selection, setSelection] = useState<Selection>(() => {
-    const d = dataBySlug[initialSlug];
-    if (!d) return null;
-    if (d.incidents[0]) return { kind: "incident", id: d.incidents[0].id };
-    if (d.conversations[0]) return { kind: "message", id: d.conversations[0].id };
-    return null;
-  });
+  const [selection, setSelection] = useState<Selection>(() =>
+    defaultSelection(dataBySlug[initialSlug]),
+  );
+  const seenIncidentIds = useRef(
+    new Set((dataBySlug[initialSlug]?.incidents ?? []).map((i) => i.id)),
+  );
+
+  useInboxRealtime(data?.building.id);
+
+  // When Realtime refreshes server props, select newly created incidents.
+  useEffect(() => {
+    if (!data) return;
+    for (const inc of data.incidents) {
+      if (!seenIncidentIds.current.has(inc.id)) {
+        seenIncidentIds.current.add(inc.id);
+        setSelection({ kind: "incident", id: inc.id });
+        return;
+      }
+    }
+    // If selected conversation was absorbed into an incident, jump to that incident.
+    if (selection?.kind === "message") {
+      const stillThere = data.conversations.some((m) => m.id === selection.id);
+      if (!stillThere) {
+        const host = data.incidents.find((i) =>
+          i.messages.some((m) => m.id === selection.id),
+        );
+        if (host) setSelection({ kind: "incident", id: host.id });
+      }
+    }
+  }, [data, selection]);
 
   const selectedIncident: InboxIncident | null = useMemo(() => {
     if (!data || selection?.kind !== "incident") return null;
@@ -44,9 +75,8 @@ export function InboxClient({
   function switchBuilding(next: string) {
     setSlug(next);
     const d = dataBySlug[next];
-    if (d?.incidents[0]) setSelection({ kind: "incident", id: d.incidents[0].id });
-    else if (d?.conversations[0]) setSelection({ kind: "message", id: d.conversations[0].id });
-    else setSelection(null);
+    seenIncidentIds.current = new Set((d?.incidents ?? []).map((i) => i.id));
+    setSelection(defaultSelection(d));
   }
 
   if (!data) {
