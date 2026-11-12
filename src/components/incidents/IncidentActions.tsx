@@ -147,7 +147,7 @@ export function IncidentActions({
             type="button"
             onClick={runDraft}
             disabled={pending || draft?.kind === "loading"}
-            className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+            className="bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-[var(--clay-deep)] disabled:opacity-50"
           >
             {draft?.kind === "loading" ? "Drafting…" : "Draft update"}
           </button>
@@ -212,7 +212,7 @@ export function IncidentActions({
             type="button"
             disabled={pending || !resolveNote.trim()}
             onClick={onResolve}
-            className="mt-3 rounded-lg border border-border px-4 py-2 text-sm font-medium hover:bg-stone-50 disabled:opacity-50"
+            className="mt-3 border border-border bg-surface px-4 py-2 text-sm font-medium hover:bg-panel disabled:opacity-50"
           >
             Mark resolved
           </button>

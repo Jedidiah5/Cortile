@@ -12,11 +12,11 @@ export function EmergencyBanner({
   const latest = emergencies[0];
 
   return (
-    <div className="border-b border-red-200 bg-danger-soft px-4 py-3 sm:px-6">
+    <div className="border-b border-[#e8c4ba] bg-danger-soft px-4 py-3 sm:px-6">
       <div className="mx-auto flex max-w-[1400px] flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-sm font-semibold text-danger">Emergency reported</p>
-          <p className="text-sm text-red-800/90">
+          <p className="text-sm text-[color:var(--clay-deep)]">
             Flat {latest.flat ?? "?"} · {latest.summary ?? latest.body.slice(0, 120)}
             {emergencies.length > 1 ? ` · +${emergencies.length - 1} more` : ""}
           </p>

@@ -44,9 +44,9 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
             key={t.id}
             className={`pointer-events-auto rounded-lg border px-4 py-3 text-sm shadow-lg ${
               t.kind === "error"
-                ? "border-red-200 bg-danger-soft text-danger"
+                ? "border-[#e8c4ba] bg-danger-soft text-danger"
                 : t.kind === "success"
-                  ? "border-teal-200 bg-accent-soft text-accent"
+                  ? "border-[#e8c4ba] bg-accent-soft text-accent"
                   : "border-border bg-surface text-foreground"
             }`}
             role="status"

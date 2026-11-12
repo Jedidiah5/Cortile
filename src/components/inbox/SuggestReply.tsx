@@ -89,7 +89,7 @@ export function SuggestReply({ messageId }: { messageId: string }) {
         type="button"
         onClick={suggest}
         disabled={pending || state?.kind === "loading"}
-        className="rounded-lg border border-border bg-surface px-3 py-1.5 text-sm font-medium hover:bg-stone-50 disabled:opacity-50"
+        className="border border-border bg-surface px-3 py-1.5 text-sm font-medium hover:bg-panel disabled:opacity-50"
       >
         {state?.kind === "loading" ? "Suggesting…" : "Suggest reply"}
       </button>

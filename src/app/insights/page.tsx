@@ -47,7 +47,7 @@ export default async function InsightsPage() {
                   {unanswered.map((row) => (
                     <tr key={row.id} className="border-b border-border last:border-0">
                       <td className="px-4 py-3 font-medium">{row.topic}</td>
-                      <td className="max-w-md px-4 py-3 text-stone-600">
+                      <td className="max-w-md px-4 py-3 text-ink-2">
                         {row.example_question}
                       </td>
                       <td className="px-4 py-3 text-muted">

@@ -136,7 +136,7 @@ export function ResidentForm({
       <button
         type="submit"
         disabled={pending || !body.trim()}
-        className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white transition-opacity disabled:opacity-50"
+        className="bg-accent px-4 py-2 text-sm font-medium text-white transition-opacity hover:bg-[var(--clay-deep)] disabled:opacity-50"
       >
         {pending ? "Sending…" : "Send message"}
       </button>

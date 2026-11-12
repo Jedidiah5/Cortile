@@ -67,7 +67,7 @@ export function DraftCard({
             }
           });
         }}
-        className="mt-4 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+        className="mt-4 bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-[var(--clay-deep)] disabled:opacity-50"
       >
         {pending ? "Sending…" : approveLabel}
       </button>

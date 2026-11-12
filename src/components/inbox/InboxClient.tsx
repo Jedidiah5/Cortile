@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import type { Building, InboxData, InboxIncident, InboxMessage } from "@/lib/data/inbox";
-import { formatRelativeTime } from "@/lib/format";
 import { CategoryChip, StatusChip, UrgencyChip } from "@/components/ui/Chips";
+import { RelativeTime } from "@/components/ui/RelativeTime";
 import { EmergencyBanner } from "@/components/inbox/EmergencyBanner";
 import { SuggestReply } from "@/components/inbox/SuggestReply";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -98,15 +98,15 @@ export function InboxClient({
             <h1 className="text-lg font-semibold tracking-tight">{data.building.name}</h1>
             <p className="text-sm text-muted">Manager inbox · {data.building.manager_name}</p>
           </div>
-          <div className="flex rounded-lg border border-border bg-background p-0.5">
+          <div className="flex border border-border bg-background p-0.5">
             {buildings.map((b) => (
               <button
                 key={b.id}
                 type="button"
                 onClick={() => switchBuilding(b.slug)}
-                className={`rounded-md px-3 py-1.5 text-sm transition-colors ${
+                className={`px-3 py-1.5 text-sm transition-colors ${
                   b.slug === slug
-                    ? "bg-surface text-foreground shadow-sm"
+                    ? "bg-surface font-medium text-foreground shadow-sm"
                     : "text-muted hover:text-foreground"
                 }`}
               >
@@ -139,7 +139,7 @@ export function InboxClient({
                     type="button"
                     onClick={() => setSelection({ kind: "incident", id: inc.id })}
                     className={`block w-full border-b border-border px-4 py-3 text-left transition-colors ${
-                      active ? "bg-accent-soft/60" : "hover:bg-stone-50"
+                      active ? "bg-accent-soft/70" : "hover:bg-panel"
                     }`}
                   >
                     <div className="flex items-start justify-between gap-2">
@@ -150,7 +150,7 @@ export function InboxClient({
                       {inc.report_count === 1
                         ? "1 report"
                         : `${inc.report_count} reports`}{" "}
-                      · {formatRelativeTime(inc.first_report_at)}
+                      · <RelativeTime iso={inc.first_report_at} />
                     </p>
                   </button>
                 );
@@ -178,7 +178,7 @@ export function InboxClient({
                     type="button"
                     onClick={() => setSelection({ kind: "message", id: m.id })}
                     className={`block w-full border-b border-border px-4 py-3 text-left transition-colors ${
-                      active ? "bg-accent-soft/60" : "hover:bg-stone-50"
+                      active ? "bg-accent-soft/70" : "hover:bg-panel"
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2">
@@ -187,10 +187,10 @@ export function InboxClient({
                         <span className="font-normal text-muted"> · Flat {m.flat ?? "?"}</span>
                       </p>
                       <span className="shrink-0 text-xs text-muted">
-                        {formatRelativeTime(m.created_at)}
+                        <RelativeTime iso={m.created_at} />
                       </span>
                     </div>
-                    <p className="mt-0.5 line-clamp-2 text-sm text-stone-600">
+                    <p className="mt-0.5 line-clamp-2 text-sm text-ink-2">
                       {m.summary ?? m.body}
                     </p>
                     <div className="mt-1.5 flex flex-wrap gap-1">
@@ -227,7 +227,7 @@ function MessageDetail({ message }: { message: InboxMessage }) {
       <header className="mb-4">
         <p className="text-sm text-muted">
           {message.resident.name} · Flat {message.flat ?? "?"} ·{" "}
-          {formatRelativeTime(message.created_at)}
+          <RelativeTime iso={message.created_at} />
         </p>
         <h2 className="mt-1 text-xl font-semibold tracking-tight">
           {message.summary ?? "Message"}
@@ -236,13 +236,13 @@ function MessageDetail({ message }: { message: InboxMessage }) {
           <CategoryChip category={message.category} />
           <UrgencyChip urgency={message.urgency} />
           {message.is_question ? (
-            <span className="rounded bg-sky-50 px-1.5 py-0.5 text-[11px] font-medium text-sky-800">
+            <span className="bg-[#eef3ee] px-1.5 py-0.5 text-[11px] font-medium text-[#4f6a4c]">
               question
             </span>
           ) : null}
         </div>
       </header>
-      <div className="rounded-xl border border-border bg-surface p-4 text-[15px] leading-relaxed text-stone-800">
+      <div className="border border-border bg-surface p-4 text-[15px] leading-relaxed text-ink">
         {message.body}
       </div>
       {message.is_question ? <SuggestReply messageId={message.id} /> : null}
@@ -263,7 +263,7 @@ function IncidentDetail({ incident }: { incident: InboxIncident }) {
           {incident.report_count === 1
             ? "1 report"
             : `${incident.report_count} reports`}{" "}
-          · first {formatRelativeTime(incident.first_report_at)}
+          · first <RelativeTime iso={incident.first_report_at} />
         </p>
         <Link
           href={`/incidents/${incident.id}`}
@@ -279,9 +279,10 @@ function IncidentDetail({ incident }: { incident: InboxIncident }) {
             className="rounded-xl border border-border bg-surface p-4"
           >
             <p className="text-sm text-muted">
-              {m.resident.name} · Flat {m.flat ?? "?"} · {formatRelativeTime(m.created_at)}
+              {m.resident.name} · Flat {m.flat ?? "?"} ·{" "}
+              <RelativeTime iso={m.created_at} />
             </p>
-            <p className="mt-1 text-[15px] leading-relaxed text-stone-800">{m.body}</p>
+            <p className="mt-1 text-[15px] leading-relaxed text-ink">{m.body}</p>
           </li>
         ))}
       </ul>
