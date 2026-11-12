@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AppNav } from "@/components/AppNav";
 import { IncidentActions } from "@/components/incidents/IncidentActions";
+import { UngroupButton } from "@/components/incidents/UngroupButton";
 import { createServiceClient } from "@/lib/supabase/server";
 import type { CitationChip } from "@/components/updates/DraftCard";
 
@@ -111,6 +112,9 @@ export default async function IncidentPage({
                   {name ?? "Resident"} · Flat {m.flat ?? "?"}
                 </p>
                 <p className="mt-1 text-[15px] leading-relaxed">{m.body}</p>
+                {incident.status !== "resolved" ? (
+                  <UngroupButton messageId={m.id} />
+                ) : null}
               </li>
             );
           })}
