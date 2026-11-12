@@ -51,8 +51,29 @@ Fake data only: **Alderwick Court** (Priya) and **Harbrook Wharf**.
 Optional — triage + group all seeded messages in time order (uses Anthropic + Voyage):
 
 ```bash
-npx tsx scripts/seed.ts --process
+npm run seed -- --process --fresh-times
 ```
+
+To process existing `new`/`untriaged` rows without reseeding:
+
+```bash
+npm run process
+# or one building:
+npm run process -- --building alderwick-court
+```
+
+## Before a demo
+
+Reseed with fresh timestamps and run the full pipeline so lift/leak messages still fall inside the 24h grouping window:
+
+```bash
+# On Voyage free tier (no payment method), set in .env.local:
+# VOYAGE_MIN_INTERVAL_MS=21000
+
+npm run seed -- --process --fresh-times
+```
+
+Expect Alderwick Court to show a lift incident with most lift reports grouped, water-ingress emergencies triaged, and Harbrook Wharf messages triaged.
 
 ## Demo script
 
@@ -71,6 +92,7 @@ In `.env.local`:
 | `SIMILARITY_THRESHOLD` | `0.80` | Lower if lift messages won't group |
 | `DOC_MATCH_THRESHOLD` | `0.45` | Document retrieval for drafts |
 | `GROUPING_WINDOW_HOURS` | `24` | Only recent same-building messages group |
+| `VOYAGE_MIN_INTERVAL_MS` | `0` | Set `21000` on Voyage free tier without a payment method |
 
 ## Deploy (Vercel)
 

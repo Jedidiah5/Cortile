@@ -5,13 +5,19 @@ import { formatRelativeTime } from "@/lib/format";
 
 /** Relative times can differ by a minute across SSR/client — suppress that noise. */
 export function RelativeTime({ iso }: { iso: string }) {
-  const [label, setLabel] = useState(() => formatRelativeTime(iso));
+  const [, setTick] = useState(0);
+  const label = formatRelativeTime(iso);
 
   useEffect(() => {
-    setLabel(formatRelativeTime(iso));
-    const id = window.setInterval(() => setLabel(formatRelativeTime(iso)), 60_000);
+    const id = window.setInterval(() => {
+      setTick((t) => t + 1);
+    }, 60_000);
     return () => window.clearInterval(id);
   }, [iso]);
 
-  return <span suppressHydrationWarning>{label}</span>;
+  return (
+    <time dateTime={iso} suppressHydrationWarning>
+      {label}
+    </time>
+  );
 }

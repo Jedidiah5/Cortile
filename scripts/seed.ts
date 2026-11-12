@@ -1,9 +1,10 @@
 /**
  * Seed script: loads /data into Supabase and embeds document chunks.
- * Usage: npx tsx scripts/seed.ts [--process]
+ * Usage: npx tsx scripts/seed.ts [--process] [--fresh-times]
  *
- * --process: after seeding, run the AI pipeline over messages in time order
- * (requires Phases 3–4). Without it, messages stay status = 'new'.
+ * --process: after seeding, run the AI pipeline over messages in time order.
+ * --fresh-times: set each message created_at from minutes_ago relative to now
+ *   (needed so grouping's 24h window still covers the seed set at demo time).
  */
 import { config } from "dotenv";
 import { readFile, readdir } from "node:fs/promises";
@@ -238,6 +239,7 @@ async function seedMessages(
   supabase: SupabaseClient,
   slugToId: Map<string, string>,
   messages: MessageSeed[],
+  freshTimes: boolean,
 ): Promise<{ id: string; created_at: string }[]> {
   // Preload resident id by building slug + flat
   const residentByKey = new Map<string, string>();
@@ -267,6 +269,8 @@ async function seedMessages(
       throw new Error(`resident flat ${m.flat} in ${m.building}: not found`);
     }
 
+    // created_at is always now − minutes_ago on insert (cleared DB each seed).
+    // --fresh-times makes that explicit for demo runs so the 24h grouping window fits.
     const created_at = new Date(
       Date.now() - m.minutes_ago * 60_000,
     ).toISOString();
@@ -288,7 +292,9 @@ async function seedMessages(
     inserted.push(row);
   }
 
-  console.log(`  ${inserted.length} messages (status=new)`);
+  console.log(
+    `  ${inserted.length} messages (status=new${freshTimes ? ", fresh timestamps" : ""})`,
+  );
   return inserted;
 }
 
@@ -323,10 +329,14 @@ async function maybeProcess(
 
 async function main(): Promise<void> {
   const doProcess = process.argv.includes("--process");
+  const freshTimes = process.argv.includes("--fresh-times");
   const root = process.cwd();
   const dataDir = path.join(root, "data");
 
   console.log("Seeding Cortile…");
+  if (freshTimes) {
+    console.log("  --fresh-times: message created_at = now − minutes_ago");
+  }
   const supabase = createSeedClient();
 
   // Warm Voyage key check early
@@ -353,6 +363,7 @@ async function main(): Promise<void> {
     supabase,
     slugToId,
     messagesJson.messages,
+    freshTimes,
   );
 
   // Counts

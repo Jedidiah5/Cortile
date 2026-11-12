@@ -4,10 +4,22 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+let lastEmbedAt = 0;
+
+async function respectMinInterval(): Promise<void> {
+  const minInterval = Number(process.env.VOYAGE_MIN_INTERVAL_MS ?? "0");
+  if (!Number.isFinite(minInterval) || minInterval <= 0) return;
+  const elapsed = Date.now() - lastEmbedAt;
+  if (elapsed < minInterval) {
+    await sleep(minInterval - elapsed);
+  }
+}
+
 /**
  * Embed texts with Voyage AI. Single swap-point for the embedding provider.
  * Returns one 1024-dim vector per input (voyage-3.5-lite).
  * Retries on 429 (free tier is ~3 RPM without a payment method).
+ * Optional VOYAGE_MIN_INTERVAL_MS spaces calls (e.g. 21000 on free tier).
  */
 export async function embed(
   texts: string[],
@@ -20,6 +32,8 @@ export async function embed(
 
   const model = process.env.VOYAGE_MODEL ?? "voyage-3.5-lite";
   const maxAttempts = 6;
+
+  await respectMinInterval();
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     const res = await fetch(VOYAGE_URL, {
@@ -35,6 +49,8 @@ export async function embed(
       }),
     });
 
+    lastEmbedAt = Date.now();
+
     if (res.ok) {
       const data = (await res.json()) as {
         data: { embedding: number[]; index: number }[];
@@ -47,9 +63,10 @@ export async function embed(
     const body = await res.text();
     if (res.status === 429 && attempt < maxAttempts) {
       const retryAfter = Number(res.headers.get("retry-after"));
-      const waitMs = Number.isFinite(retryAfter) && retryAfter > 0
-        ? retryAfter * 1000
-        : Math.min(60_000, 21_000 * attempt); // ~3 RPM → wait ~21s+
+      const waitMs =
+        Number.isFinite(retryAfter) && retryAfter > 0
+          ? retryAfter * 1000
+          : Math.min(60_000, 21_000 * attempt); // ~3 RPM → wait ~21s+
       console.warn(
         `  Voyage rate-limited (429), retry ${attempt}/${maxAttempts - 1} in ${Math.round(waitMs / 1000)}s…`,
       );

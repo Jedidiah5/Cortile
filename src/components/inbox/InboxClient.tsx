@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import type { Building, InboxData, InboxIncident, InboxMessage } from "@/lib/data/inbox";
 import { CategoryChip, StatusChip, UrgencyChip } from "@/components/ui/Chips";
@@ -36,49 +36,44 @@ export function InboxClient({
   const [selection, setSelection] = useState<Selection>(() =>
     defaultSelection(dataBySlug[initialSlug]),
   );
-  const seenIncidentIds = useRef(
-    new Set((dataBySlug[initialSlug]?.incidents ?? []).map((i) => i.id)),
-  );
 
   useInboxRealtime(data?.building.id);
 
-  // When Realtime refreshes server props, select newly created incidents.
-  useEffect(() => {
-    if (!data) return;
-    for (const inc of data.incidents) {
-      if (!seenIncidentIds.current.has(inc.id)) {
-        seenIncidentIds.current.add(inc.id);
-        setSelection({ kind: "incident", id: inc.id });
-        return;
-      }
-    }
-    // If selected conversation was absorbed into an incident, jump to that incident.
+  // When a selected message is absorbed into an incident (realtime), show that incident.
+  const effectiveSelection = useMemo((): Selection => {
+    if (!data) return selection;
+
     if (selection?.kind === "message") {
       const stillThere = data.conversations.some((m) => m.id === selection.id);
-      if (!stillThere) {
-        const host = data.incidents.find((i) =>
-          i.messages.some((m) => m.id === selection.id),
-        );
-        if (host) setSelection({ kind: "incident", id: host.id });
-      }
+      if (stillThere) return selection;
+      const host = data.incidents.find((i) =>
+        i.messages.some((m) => m.id === selection.id),
+      );
+      if (host) return { kind: "incident", id: host.id };
+      return defaultSelection(data);
     }
+
+    if (selection?.kind === "incident") {
+      if (data.incidents.some((i) => i.id === selection.id)) return selection;
+      return defaultSelection(data);
+    }
+
+    return defaultSelection(data);
   }, [data, selection]);
 
   const selectedIncident: InboxIncident | null = useMemo(() => {
-    if (!data || selection?.kind !== "incident") return null;
-    return data.incidents.find((i) => i.id === selection.id) ?? null;
-  }, [data, selection]);
+    if (!data || effectiveSelection?.kind !== "incident") return null;
+    return data.incidents.find((i) => i.id === effectiveSelection.id) ?? null;
+  }, [data, effectiveSelection]);
 
   const selectedMessage: InboxMessage | null = useMemo(() => {
-    if (!data || selection?.kind !== "message") return null;
-    return data.conversations.find((m) => m.id === selection.id) ?? null;
-  }, [data, selection]);
+    if (!data || effectiveSelection?.kind !== "message") return null;
+    return data.conversations.find((m) => m.id === effectiveSelection.id) ?? null;
+  }, [data, effectiveSelection]);
 
   function switchBuilding(next: string) {
     setSlug(next);
-    const d = dataBySlug[next];
-    seenIncidentIds.current = new Set((d?.incidents ?? []).map((i) => i.id));
-    setSelection(defaultSelection(d));
+    setSelection(defaultSelection(dataBySlug[next]));
   }
 
   if (!data) {
@@ -132,7 +127,9 @@ export function InboxClient({
               </div>
             ) : (
               data.incidents.map((inc) => {
-                const active = selection?.kind === "incident" && selection.id === inc.id;
+                const active =
+                  effectiveSelection?.kind === "incident" &&
+                  effectiveSelection.id === inc.id;
                 return (
                   <button
                     key={inc.id}
@@ -171,7 +168,9 @@ export function InboxClient({
               </div>
             ) : (
               data.conversations.map((m) => {
-                const active = selection?.kind === "message" && selection.id === m.id;
+                const active =
+                  effectiveSelection?.kind === "message" &&
+                  effectiveSelection.id === m.id;
                 return (
                   <button
                     key={m.id}
