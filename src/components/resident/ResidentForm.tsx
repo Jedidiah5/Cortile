@@ -3,6 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { Building } from "@/lib/data/inbox";
+import { useToast } from "@/components/ui/Toast";
 
 type UnitOption = { flat_no: string; resident_name: string };
 
@@ -21,6 +22,7 @@ export function ResidentForm({
   const [ok, setOk] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const router = useRouter();
+  const toast = useToast();
 
   function onBuildingChange(next: string) {
     setSlug(next);
@@ -46,18 +48,25 @@ export function ResidentForm({
           message?: { id: string; category?: string; urgency?: string };
         };
         if (!res.ok) {
-          setError(data.error ?? "Failed to send");
+          const msg = data.error ?? "Failed to send";
+          setError(msg);
+          toast.push(msg, "error");
           return;
         }
         const chips = [data.message?.category, data.message?.urgency]
           .filter(Boolean)
           .join(" · ");
-        setOk(chips ? `Sent — ${chips}. Opening inbox…` : "Sent. Opening inbox…");
+        const okMsg = chips
+          ? `Sent — ${chips}. Opening inbox…`
+          : "Sent. Opening inbox…";
+        setOk(okMsg);
+        toast.push(okMsg, "success");
         setBody("");
         router.push(`/inbox?building=${encodeURIComponent(slug)}`);
         router.refresh();
       } catch {
         setError("Network error");
+        toast.push("Network error", "error");
       }
     });
   }

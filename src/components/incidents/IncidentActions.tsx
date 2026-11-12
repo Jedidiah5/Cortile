@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { DraftCard, type CitationChip } from "@/components/updates/DraftCard";
+import { useToast } from "@/components/ui/Toast";
 
 type DraftState =
   | null
@@ -29,6 +30,7 @@ export function IncidentActions({
   deliveryCount: number;
 }) {
   const router = useRouter();
+  const toast = useToast();
   const [draft, setDraft] = useState<DraftState>(
     initialDraft
       ? {
@@ -63,7 +65,9 @@ export function IncidentActions({
         };
         if (!res.ok) {
           setDraft(null);
-          setError(data.error ?? "Draft failed");
+          const msg = data.error ?? "Draft failed";
+          setError(msg);
+          toast.push(msg, "error");
           return;
         }
         if (data.status === "ok" && data.updateId && data.text) {
@@ -73,17 +77,22 @@ export function IncidentActions({
             text: data.text,
             citations: data.citations ?? [],
           });
+          toast.push("Draft ready — review citations before sending", "success");
         } else if (data.status === "no_source") {
           setDraft({ kind: "no_source", topic: data.topic ?? "unknown" });
+          toast.push("No source found in building documents", "info");
         } else if (data.status === "cannot_answer") {
           setDraft({ kind: "cannot_answer", topic: data.topic ?? "unknown" });
+          toast.push("No source found in building documents", "info");
         } else {
           setDraft({ kind: "ungrounded" });
+          toast.push("Could not ground a draft", "error");
         }
         router.refresh();
       } catch {
         setDraft(null);
         setError("Network error");
+        toast.push("Network error", "error");
       }
     });
   }
@@ -96,7 +105,12 @@ export function IncidentActions({
     });
     const data = (await res.json()) as { error?: string; delivered_to?: number };
     if (!res.ok) throw new Error(data.error ?? "Approve failed");
-    setDraft({ kind: "sent", deliveredTo: data.delivered_to ?? 0 });
+    const delivered = data.delivered_to ?? 0;
+    setDraft({ kind: "sent", deliveredTo: delivered });
+    toast.push(
+      `Update sent to ${delivered} ${delivered === 1 ? "resident" : "residents"}`,
+      "success",
+    );
     router.refresh();
   }
 
@@ -111,12 +125,16 @@ export function IncidentActions({
         });
         const data = (await res.json()) as { error?: string };
         if (!res.ok) {
-          setError(data.error ?? "Resolve failed");
+          const msg = data.error ?? "Resolve failed";
+          setError(msg);
+          toast.push(msg, "error");
           return;
         }
+        toast.push("Incident marked resolved", "success");
         router.refresh();
       } catch {
         setError("Network error");
+        toast.push("Network error", "error");
       }
     });
   }

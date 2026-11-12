@@ -2,9 +2,11 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/Toast";
 
 export function UngroupButton({ messageId }: { messageId: string }) {
   const router = useRouter();
+  const toast = useToast();
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -22,12 +24,16 @@ export function UngroupButton({ messageId }: { messageId: string }) {
               });
               const data = (await res.json()) as { error?: string };
               if (!res.ok) {
-                setError(data.error ?? "Failed to move out");
+                const msg = data.error ?? "Failed to move out";
+                setError(msg);
+                toast.push(msg, "error");
                 return;
               }
+              toast.push("Moved out of incident — correction logged", "success");
               router.refresh();
             } catch {
               setError("Network error");
+              toast.push("Network error", "error");
             }
           });
         }}

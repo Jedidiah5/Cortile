@@ -1,4 +1,5 @@
 import { AppNav } from "@/components/AppNav";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { getInsights } from "@/lib/data/insights";
 import { formatRelativeTime } from "@/lib/format";
 
@@ -24,7 +25,12 @@ export default async function InsightsPage() {
             Unanswered questions
           </h2>
           {unanswered.length === 0 ? (
-            <p className="mt-3 text-sm text-muted">No unanswered topics logged yet.</p>
+            <div className="mt-3">
+              <EmptyState
+                title="No unanswered topics yet"
+                body="When a draft or suggest-reply finds no building document, it lands here."
+              />
+            </div>
           ) : (
             <div className="mt-3 overflow-x-auto rounded-xl border border-border bg-surface">
               <table className="w-full min-w-[640px] text-left text-sm">

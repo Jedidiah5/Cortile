@@ -1,39 +1,94 @@
-# Incidents for Cortile (prototype)
+# Incidents for Cortile
 
-Groups duplicate resident messages about the same building problem into one incident, then sends one cited, manager-approved update to everyone affected.
+Prototype property-manager inbox that triages resident messages, groups the same building problem into one **incident**, and sends one **cited, manager-approved** update to everyone affected.
 
-Full spec: **BUILD_BRIEF.md**. Cursor rules: `.cursor/rules/project.mdc`.
+![Manager inbox](docs/screenshot-inbox.png)
 
-## What's already here
+## Architecture
 
-| Path | What it is |
+Modular monolith — one Next.js App Router app. The AI pipeline lives in `src/lib/pipeline/` with **no UI imports**, so it could later move behind a queue.
+
+```
+Resident message
+  → emergency keyword check (code, before AI)
+  → Claude triage (category / urgency / summary) + Voyage embed
+  → similarity + same-problem check → attach or create incident
+  → draft from building docs only (RAG) → verify citations
+  → manager edits → approve → deliveries (no real email/SMS)
+```
+
+| Layer | Tech |
 | --- | --- |
-| `BUILD_BRIEF.md` | The build plan Cursor follows, phase by phase |
-| `.cursor/rules/project.mdc` | Rules Cursor applies to every edit |
-| `supabase/schema.sql` | Tables, pgvector, search functions, realtime |
-| `src/lib/ai/schemas.ts` | Zod schemas + emergency keyword rules |
-| `src/lib/ai/prompts.ts` | All model prompts |
-| `data/buildings.json` | 2 buildings, 72 flats, 72 residents |
-| `data/messages.json` | 36 resident messages with the expected outcome for each |
-| `data/documents/` | 8 building documents (house rules, emergency policy, lift contract, ...) |
-| `.env.example` | Keys and tuning settings |
+| App | Next.js (App Router) + TypeScript strict + Tailwind |
+| DB | Supabase Postgres + pgvector + Realtime |
+| Models | Anthropic Claude (`CLAUDE_FAST_MODEL`, `CLAUDE_DRAFT_MODEL`) |
+| Embeddings | Voyage AI `voyage-3.5-lite` (1024-d) via `src/lib/ai/embed.ts` |
+| Validation | Zod on every model output |
+
+Fake data only: **Alderwick Court** (Priya) and **Harbrook Wharf**.
 
 ## Setup
 
-1. Create a Supabase project. In the SQL editor, run `supabase/schema.sql`.
-2. Get API keys: Anthropic (console.anthropic.com) and Voyage AI (voyageai.com, free tier is enough).
-3. Put this folder in a new empty repo and open it in Cursor.
-4. Copy `.env.example` to `.env.local` and fill it in.
+1. **Supabase** — create a project. In the SQL editor, run all of `supabase/schema.sql`.
+2. **API keys** — [Anthropic](https://console.anthropic.com) and [Voyage AI](https://www.voyageai.com) (free tier works; ~3 RPM without a payment method).
+3. **Env**
+   ```bash
+   cp .env.example .env.local
+   ```
+   Fill `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `ANTHROPIC_API_KEY`, `VOYAGE_API_KEY`.
+4. **Install & seed**
+   ```bash
+   npm install
+   npx tsx scripts/seed.ts
+   ```
+   Expect: 2 buildings, 36 messages (`status=new`), 8 documents, ~41 embedded chunks.
+5. **Dev**
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000/inbox](http://localhost:3000/inbox).
 
-## First prompt to paste into Cursor (Agent mode)
+Optional — triage + group all seeded messages in time order (uses Anthropic + Voyage):
 
-> Read BUILD_BRIEF.md and .cursor/rules/project.mdc fully. Then do Phase 1 only: scaffold the Next.js app (App Router, TypeScript strict, Tailwind) in this folder without deleting the existing files, add the Supabase and Anthropic clients, write src/lib/ai/embed.ts for Voyage, and write scripts/seed.ts as described. Use the provided schemas.ts and prompts.ts as they are. When done, tell me the exact commands to run and what I should see. Stop after Phase 1.
+```bash
+npx tsx scripts/seed.ts --process
+```
 
-Then for each next phase:
+## Demo script
 
-> Phase 1 works. Now do Phase N from BUILD_BRIEF.md only. Check its "Done when" before stopping.
+1. From `/resident`, send **3+ lift** messages for Alderwick Court (different flats) → chips appear → incident forms around the 3rd.
+2. Open the incident → **Draft update** → cited draft (e.g. Lift maintenance contract, Response times) → edit → **Approve & send**.
+3. Send `water is pouring through my ceiling` → red emergency banner + on-call number.
+4. Send `Can I install an EV charger in my space?` → **Suggest reply** → No source found → `/insights`.
+5. On an incident report → **Move out of incident** → correction counted on Insights.
 
-## Testing tips
+## Tuning
 
-- `data/messages.json` has an `expected` field for each message. After `npx tsx scripts/seed.ts --process`, compare what the pipeline did with what was expected. Tune `SIMILARITY_THRESHOLD` if the lift messages don't group, or if the entrance door message joins the lift incident.
-- All names, phone numbers and companies in the data are fictional (phone numbers use Ofcom's drama range).
+In `.env.local`:
+
+| Variable | Default | Notes |
+| --- | --- | --- |
+| `SIMILARITY_THRESHOLD` | `0.80` | Lower if lift messages won't group |
+| `DOC_MATCH_THRESHOLD` | `0.45` | Document retrieval for drafts |
+| `GROUPING_WINDOW_HOURS` | `24` | Only recent same-building messages group |
+
+## Deploy (Vercel)
+
+```bash
+npx vercel
+```
+
+Add the same env vars in the Vercel project settings (including `SUPABASE_SERVICE_ROLE_KEY` — server only). Point the production URL at your Supabase project; Realtime needs the anon key + tables in `supabase_realtime`.
+
+## Project layout
+
+```
+src/app/           inbox, resident, incidents, insights, API routes
+src/lib/pipeline/  emergency → triage → group → draft → verify
+src/lib/ai/        prompts, schemas, Claude + Voyage clients
+supabase/          schema.sql
+data/              seed buildings, messages, documents
+scripts/seed.ts    load /data + embed chunks
+```
+
+Full build plan: **BUILD_BRIEF.md**. Cursor rules: `.cursor/rules/project.mdc`.

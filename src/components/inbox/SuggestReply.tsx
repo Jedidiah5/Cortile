@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { DraftCard, type CitationChip } from "@/components/updates/DraftCard";
+import { useToast } from "@/components/ui/Toast";
 
 type State =
   | null
@@ -15,6 +16,7 @@ type State =
 
 export function SuggestReply({ messageId }: { messageId: string }) {
   const router = useRouter();
+  const toast = useToast();
   const [state, setState] = useState<State>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -37,7 +39,9 @@ export function SuggestReply({ messageId }: { messageId: string }) {
         };
         if (!res.ok) {
           setState(null);
-          setError(data.error ?? "Suggest failed");
+          const msg = data.error ?? "Suggest failed";
+          setError(msg);
+          toast.push(msg, "error");
           return;
         }
         if (data.status === "ok" && data.updateId && data.text) {
@@ -47,16 +51,21 @@ export function SuggestReply({ messageId }: { messageId: string }) {
             text: data.text,
             citations: data.citations ?? [],
           });
+          toast.push("Suggested reply ready", "success");
         } else if (data.status === "no_source") {
           setState({ kind: "no_source", topic: data.topic ?? "unknown" });
+          toast.push("No source found — logged to Insights", "info");
         } else if (data.status === "cannot_answer") {
           setState({ kind: "cannot_answer", topic: data.topic ?? "unknown" });
+          toast.push("No source found — logged to Insights", "info");
         } else {
           setState({ kind: "ungrounded" });
+          toast.push("Could not ground a draft", "error");
         }
       } catch {
         setState(null);
         setError("Network error");
+        toast.push("Network error", "error");
       }
     });
   }
@@ -70,6 +79,7 @@ export function SuggestReply({ messageId }: { messageId: string }) {
     const data = (await res.json()) as { error?: string };
     if (!res.ok) throw new Error(data.error ?? "Approve failed");
     setState({ kind: "sent" });
+    toast.push("Reply marked as sent", "success");
     router.refresh();
   }
 

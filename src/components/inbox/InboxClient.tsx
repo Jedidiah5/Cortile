@@ -7,6 +7,7 @@ import { formatRelativeTime } from "@/lib/format";
 import { CategoryChip, StatusChip, UrgencyChip } from "@/components/ui/Chips";
 import { EmergencyBanner } from "@/components/inbox/EmergencyBanner";
 import { SuggestReply } from "@/components/inbox/SuggestReply";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { useInboxRealtime } from "@/hooks/useInboxRealtime";
 
 type Selection =
@@ -123,7 +124,12 @@ export function InboxClient({
           </div>
           <div className="overflow-y-auto">
             {data.incidents.length === 0 ? (
-              <p className="px-4 py-3 text-sm text-muted">No open incidents</p>
+              <div className="p-4">
+                <EmptyState
+                  title="No open incidents"
+                  body="Related reports in the same building will group here."
+                />
+              </div>
             ) : (
               data.incidents.map((inc) => {
                 const active = selection?.kind === "incident" && selection.id === inc.id;
@@ -141,8 +147,10 @@ export function InboxClient({
                       <StatusChip status={inc.status} />
                     </div>
                     <p className="mt-1 text-xs text-muted">
-                      {inc.report_count} report{inc.report_count === 1 ? "" : "s"} ·{" "}
-                      {formatRelativeTime(inc.first_report_at)}
+                      {inc.report_count === 1
+                        ? "1 report"
+                        : `${inc.report_count} reports`}{" "}
+                      · {formatRelativeTime(inc.first_report_at)}
                     </p>
                   </button>
                 );
@@ -155,7 +163,12 @@ export function InboxClient({
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto">
             {data.conversations.length === 0 ? (
-              <p className="px-4 py-3 text-sm text-muted">No conversations</p>
+              <div className="p-4">
+                <EmptyState
+                  title="No conversations"
+                  body="Send a message from Send as resident to try the pipeline."
+                />
+              </div>
             ) : (
               data.conversations.map((m) => {
                 const active = selection?.kind === "message" && selection.id === m.id;
@@ -197,7 +210,10 @@ export function InboxClient({
           ) : selectedMessage ? (
             <MessageDetail message={selectedMessage} />
           ) : (
-            <p className="text-sm text-muted">Select an incident or conversation.</p>
+            <EmptyState
+              title="Nothing selected"
+              body="Pick an incident or conversation from the list."
+            />
           )}
         </section>
       </div>
@@ -244,8 +260,10 @@ function IncidentDetail({ incident }: { incident: InboxIncident }) {
         </div>
         <h2 className="mt-2 text-xl font-semibold tracking-tight">{incident.title}</h2>
         <p className="mt-1 text-sm text-muted">
-          {incident.report_count} report{incident.report_count === 1 ? "" : "s"} · first{" "}
-          {formatRelativeTime(incident.first_report_at)}
+          {incident.report_count === 1
+            ? "1 report"
+            : `${incident.report_count} reports`}{" "}
+          · first {formatRelativeTime(incident.first_report_at)}
         </p>
         <Link
           href={`/incidents/${incident.id}`}
