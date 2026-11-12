@@ -36,3 +36,13 @@ export function StatusChip({ status }: { status: string }) {
     </span>
   );
 }
+
+/** Shown when triage has not run or failed (status new / untriaged). */
+export function NotTriagedChip({ status }: { status: string }) {
+  if (status !== "new" && status !== "untriaged") return null;
+  return (
+    <span className="bg-[#f8edd9] px-1.5 py-0.5 text-[11px] font-medium text-[#8a6a1f]">
+      Not triaged
+    </span>
+  );
+}

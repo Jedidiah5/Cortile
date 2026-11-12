@@ -1,13 +1,20 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { Building, InboxData, InboxIncident, InboxMessage } from "@/lib/data/inbox";
-import { CategoryChip, StatusChip, UrgencyChip } from "@/components/ui/Chips";
+import {
+  CategoryChip,
+  NotTriagedChip,
+  StatusChip,
+  UrgencyChip,
+} from "@/components/ui/Chips";
 import { RelativeTime } from "@/components/ui/RelativeTime";
 import { EmergencyBanner } from "@/components/inbox/EmergencyBanner";
 import { SuggestReply } from "@/components/inbox/SuggestReply";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { useToast } from "@/components/ui/Toast";
 import { useInboxRealtime } from "@/hooks/useInboxRealtime";
 
 type Selection =
@@ -190,9 +197,10 @@ export function InboxClient({
                       </span>
                     </div>
                     <p className="mt-0.5 line-clamp-2 text-sm text-ink-2">
-                      {m.summary ?? m.body}
+                      {m.body}
                     </p>
                     <div className="mt-1.5 flex flex-wrap gap-1">
+                      <NotTriagedChip status={m.status} />
                       <CategoryChip category={m.category} />
                       <UrgencyChip urgency={m.urgency} />
                     </div>
@@ -221,6 +229,12 @@ export function InboxClient({
 }
 
 function MessageDetail({ message }: { message: InboxMessage }) {
+  const router = useRouter();
+  const toast = useToast();
+  const [pending, startTransition] = useTransition();
+  const needsTriage =
+    message.status === "new" || message.status === "untriaged";
+
   return (
     <article className="mx-auto max-w-2xl">
       <header className="mb-4">
@@ -232,6 +246,7 @@ function MessageDetail({ message }: { message: InboxMessage }) {
           {message.summary ?? "Message"}
         </h2>
         <div className="mt-2 flex flex-wrap gap-1.5">
+          <NotTriagedChip status={message.status} />
           <CategoryChip category={message.category} />
           <UrgencyChip urgency={message.urgency} />
           {message.is_question ? (
@@ -244,6 +259,36 @@ function MessageDetail({ message }: { message: InboxMessage }) {
       <div className="border border-border bg-surface p-4 text-[15px] leading-relaxed text-ink">
         {message.body}
       </div>
+      {needsTriage ? (
+        <div className="mt-4">
+          <button
+            type="button"
+            disabled={pending}
+            onClick={() => {
+              startTransition(async () => {
+                try {
+                  const res = await fetch(
+                    `/api/messages/${message.id}/retriage`,
+                    { method: "POST" },
+                  );
+                  const data = (await res.json()) as { error?: string };
+                  if (!res.ok) {
+                    toast.push(data.error ?? "Retriage failed", "error");
+                    return;
+                  }
+                  toast.push("Triage complete", "success");
+                  router.refresh();
+                } catch {
+                  toast.push("Network error", "error");
+                }
+              });
+            }}
+            className="border border-border bg-surface px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-panel disabled:opacity-50"
+          >
+            {pending ? "Retrying…" : "Retry triage"}
+          </button>
+        </div>
+      ) : null}
       {message.is_question ? <SuggestReply messageId={message.id} /> : null}
     </article>
   );
