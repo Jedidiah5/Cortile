@@ -1,4 +1,4 @@
-import { formatChipLabel } from "@/lib/format";
+import { formatChipLabel, formatIncidentStatus } from "@/lib/format";
 
 const urgencyClass: Record<string, string> = {
   emergency: "bg-danger-soft text-danger",
@@ -31,8 +31,8 @@ export function UrgencyChip({ urgency }: { urgency: string | null }) {
 
 export function StatusChip({ status }: { status: string }) {
   return (
-    <span className="bg-accent-soft px-1.5 py-0.5 text-[11px] font-medium capitalize text-accent">
-      {formatChipLabel(status)}
+    <span className="bg-accent-soft px-1.5 py-0.5 text-[11px] font-medium text-accent">
+      {formatIncidentStatus(status)}
     </span>
   );
 }

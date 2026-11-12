@@ -191,8 +191,9 @@ export function IncidentActions({
 
       {status === "update_sent" && draft?.kind !== "sent" && deliveryCount > 0 ? (
         <p className="text-sm text-muted">
-          Last update delivered to {deliveryCount}{" "}
-          {deliveryCount === 1 ? "resident" : "residents"}.
+          Last update was delivered to {deliveryCount}{" "}
+          {deliveryCount === 1 ? "resident" : "residents"} at the time it was
+          sent.
         </p>
       ) : null}
 

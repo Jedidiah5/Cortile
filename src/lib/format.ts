@@ -13,6 +13,17 @@ export function formatChipLabel(value: string): string {
   return value.replace(/_/g, " ");
 }
 
+const INCIDENT_STATUS_LABELS: Record<string, string> = {
+  open: "Open",
+  update_sent: "Update sent",
+  resolved: "Resolved",
+};
+
+/** Human-readable incident status for chips and page copy. */
+export function formatIncidentStatus(status: string): string {
+  return INCIDENT_STATUS_LABELS[status] ?? formatChipLabel(status);
+}
+
 /** Pull the on-call number from an emergency-policy "Who to call" section. */
 export function extractOnCallNumber(text: string): string | null {
   const m = text.match(/on-call line on\s+([\d\s]+)/i);
