@@ -51,7 +51,7 @@ Fake data only: **Alderwick Court** (Priya) and **Harbrook Wharf**.
 Optional — triage + group all seeded messages in time order (uses Anthropic + Voyage):
 
 ```bash
-npm run seed -- --process --fresh-times
+npx tsx scripts/seed.ts --process --fresh-times
 ```
 
 To process existing `new`/`untriaged` rows without reseeding:
@@ -70,7 +70,8 @@ Reseed with fresh timestamps and run the full pipeline so lift/leak messages sti
 # On Voyage free tier (no payment method), set in .env.local:
 # VOYAGE_MIN_INTERVAL_MS=21000
 
-npm run seed -- --process --fresh-times
+npx tsx scripts/seed.ts --process --fresh-times
+# equivalent: npm run seed -- --process --fresh-times
 ```
 
 Expect Alderwick Court to show a lift incident with most lift reports grouped, water-ingress emergencies triaged, and Harbrook Wharf messages triaged.
