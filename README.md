@@ -102,6 +102,16 @@ npx vercel
 
 Add the same env vars in the Vercel project settings (including `SUPABASE_SERVICE_ROLE_KEY` — server only). Point the production URL at your Supabase project; Realtime needs the anon key + tables in `supabase_realtime`.
 
+### Public demo safety
+
+`POST /api/messages` is limited to 10 requests/minute per IP; draft and suggest routes to 5/minute. For a shareable read-only link that cannot spend Anthropic/Voyage credit, set:
+
+```bash
+DEMO_READ_ONLY=true
+```
+
+Mutating API routes then return `403` with `{ "error": "Demo is read-only" }`.
+
 ## Project layout
 
 ```

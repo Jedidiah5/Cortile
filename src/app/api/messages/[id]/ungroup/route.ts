@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
+import { demoReadOnlyResponse } from "@/lib/demoGuard";
 
 export async function POST(
   _req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  const readOnly = demoReadOnlyResponse();
+  if (readOnly) return readOnly;
+
   const { id: messageId } = await params;
   const supabase = createServiceClient();
 

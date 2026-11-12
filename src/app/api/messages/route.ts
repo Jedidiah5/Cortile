@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createServiceClient } from "@/lib/supabase/server";
 import { processMessage } from "@/lib/pipeline";
+import { demoReadOnlyResponse } from "@/lib/demoGuard";
+import { clientIp, rateLimit } from "@/lib/rateLimit";
 
 const BodySchema = z.object({
   building_slug: z.string().min(1),
@@ -10,6 +12,19 @@ const BodySchema = z.object({
 });
 
 export async function POST(req: Request) {
+  const readOnly = demoReadOnlyResponse();
+  if (readOnly) return readOnly;
+
+  const limited = rateLimit(`messages:${clientIp(req)}`, 10);
+  if (!limited.ok) {
+    return NextResponse.json(
+      {
+        error: `Too many messages — try again in ${limited.retryAfterSec}s`,
+      },
+      { status: 429 },
+    );
+  }
+
   let json: unknown;
   try {
     json = await req.json();

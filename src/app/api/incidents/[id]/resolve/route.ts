@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createServiceClient } from "@/lib/supabase/server";
+import { demoReadOnlyResponse } from "@/lib/demoGuard";
 
 const BodySchema = z.object({
   note: z.string().min(1).max(2000),
@@ -11,6 +12,9 @@ export async function POST(
   req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  const readOnly = demoReadOnlyResponse();
+  if (readOnly) return readOnly;
+
   const { id: incidentId } = await params;
   let json: unknown;
   try {
