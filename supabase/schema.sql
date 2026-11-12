@@ -47,7 +47,8 @@ create table messages (
   status text not null default 'new' check (status in ('new','triaged','untriaged')),
   category text,
   urgency text check (urgency in ('emergency','high','normal','low')),
-  flat text,
+  flat text,                 -- sender's flat (from the unit they message as)
+  mentioned_flat text,       -- flat number extracted from the body, if different
   summary text,
   is_question boolean default false,
   triage_json jsonb,

@@ -74,10 +74,21 @@ export async function triageMessage(
     return { urgency: null, ok: false };
   }
 
+  const urgency = maxUrgency(floorUrgency, parsed.data.urgency);
+  // Keep messages.flat as the sender's unit. Only store a different
+  // AI-extracted flat as mentioned_flat so the manager replies to the right person.
+  const extractedFlat = parsed.data.flat;
+  const mentionedFlat =
+    extractedFlat &&
+    extractedFlat.trim() !== "" &&
+    extractedFlat !== message.flat
+      ? extractedFlat
+      : null;
+
   const triage: Triage = {
     ...parsed.data,
-    urgency: maxUrgency(floorUrgency, parsed.data.urgency),
-    flat: parsed.data.flat ?? message.flat,
+    urgency,
+    flat: message.flat,
   };
 
   let embedding: number[] | null = null;
@@ -96,10 +107,14 @@ export async function triageMessage(
     .update({
       category: triage.category,
       urgency: triage.urgency,
-      flat: triage.flat,
+      flat: message.flat,
+      mentioned_flat: mentionedFlat,
       summary: triage.summary,
       is_question: triage.is_question,
-      triage_json: triage,
+      triage_json: {
+        ...triage,
+        extracted_flat: extractedFlat,
+      },
       status: "triaged",
       ...(embedding ? { embedding } : {}),
     })

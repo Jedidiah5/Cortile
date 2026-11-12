@@ -242,6 +242,11 @@ function MessageDetail({ message }: { message: InboxMessage }) {
           {message.resident.name} · Flat {message.flat ?? "?"} ·{" "}
           <RelativeTime iso={message.created_at} />
         </p>
+        {message.mentioned_flat ? (
+          <p className="mt-0.5 text-xs text-muted">
+            Mentions flat {message.mentioned_flat}
+          </p>
+        ) : null}
         <h2 className="mt-1 text-xl font-semibold tracking-tight">Message</h2>
         <div className="mt-2 flex flex-wrap gap-1.5">
           <NotTriagedChip status={message.status} />

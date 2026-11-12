@@ -18,6 +18,7 @@ export type InboxMessage = {
   category: string | null;
   urgency: string | null;
   flat: string | null;
+  mentioned_flat: string | null;
   summary: string | null;
   is_question: boolean | null;
   incident_id: string | null;
@@ -88,7 +89,7 @@ export async function getInboxData(buildingId: string): Promise<Omit<InboxData, 
     supabase
       .from("messages")
       .select(
-        "id, building_id, body, created_at, status, category, urgency, flat, summary, is_question, incident_id, resident:residents!inner(id, name)",
+        "id, building_id, body, created_at, status, category, urgency, flat, mentioned_flat, summary, is_question, incident_id, resident:residents!inner(id, name)",
       )
       .eq("building_id", buildingId)
       .order("created_at", { ascending: false }),

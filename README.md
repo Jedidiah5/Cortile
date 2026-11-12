@@ -30,6 +30,10 @@ Fake data only: **Alderwick Court** (Priya) and **Harbrook Wharf**.
 ## Setup
 
 1. **Supabase** — create a project. In the SQL editor, run all of `supabase/schema.sql`.
+   If you already applied an older schema, run this idempotent migration:
+   ```sql
+   alter table messages add column if not exists mentioned_flat text;
+   ```
 2. **API keys** — [Anthropic](https://console.anthropic.com) and [Voyage AI](https://www.voyageai.com) (free tier works; ~3 RPM without a payment method).
 3. **Env**
    ```bash
