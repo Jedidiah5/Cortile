@@ -242,9 +242,7 @@ function MessageDetail({ message }: { message: InboxMessage }) {
           {message.resident.name} · Flat {message.flat ?? "?"} ·{" "}
           <RelativeTime iso={message.created_at} />
         </p>
-        <h2 className="mt-1 text-xl font-semibold tracking-tight">
-          {message.summary ?? "Message"}
-        </h2>
+        <h2 className="mt-1 text-xl font-semibold tracking-tight">Message</h2>
         <div className="mt-2 flex flex-wrap gap-1.5">
           <NotTriagedChip status={message.status} />
           <CategoryChip category={message.category} />
@@ -259,6 +257,16 @@ function MessageDetail({ message }: { message: InboxMessage }) {
       <div className="border border-border bg-surface p-4 text-[15px] leading-relaxed text-ink">
         {message.body}
       </div>
+      {message.summary ? (
+        <div className="mt-4">
+          <p className="text-xs font-medium uppercase tracking-wide text-muted">
+            AI summary
+          </p>
+          <p className="mt-1 text-sm leading-relaxed text-ink-2">
+            {message.summary}
+          </p>
+        </div>
+      ) : null}
       {needsTriage ? (
         <div className="mt-4">
           <button
