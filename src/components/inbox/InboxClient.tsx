@@ -6,6 +6,7 @@ import type { Building, InboxData, InboxIncident, InboxMessage } from "@/lib/dat
 import { formatRelativeTime } from "@/lib/format";
 import { CategoryChip, StatusChip, UrgencyChip } from "@/components/ui/Chips";
 import { EmergencyBanner } from "@/components/inbox/EmergencyBanner";
+import { SuggestReply } from "@/components/inbox/SuggestReply";
 import { useInboxRealtime } from "@/hooks/useInboxRealtime";
 
 type Selection =
@@ -228,6 +229,7 @@ function MessageDetail({ message }: { message: InboxMessage }) {
       <div className="rounded-xl border border-border bg-surface p-4 text-[15px] leading-relaxed text-stone-800">
         {message.body}
       </div>
+      {message.is_question ? <SuggestReply messageId={message.id} /> : null}
     </article>
   );
 }

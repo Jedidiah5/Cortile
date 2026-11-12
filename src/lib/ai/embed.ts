@@ -9,7 +9,10 @@ function sleep(ms: number): Promise<void> {
  * Returns one 1024-dim vector per input (voyage-3.5-lite).
  * Retries on 429 (free tier is ~3 RPM without a payment method).
  */
-export async function embed(texts: string[]): Promise<number[][]> {
+export async function embed(
+  texts: string[],
+  inputType: "document" | "query" = "document",
+): Promise<number[][]> {
   if (texts.length === 0) return [];
 
   const apiKey = process.env.VOYAGE_API_KEY;
@@ -28,7 +31,7 @@ export async function embed(texts: string[]): Promise<number[][]> {
       body: JSON.stringify({
         input: texts,
         model,
-        input_type: "document",
+        input_type: inputType,
       }),
     });
 

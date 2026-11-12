@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { AppNav } from "@/components/AppNav";
+import { IncidentActions } from "@/components/incidents/IncidentActions";
 import { createServiceClient } from "@/lib/supabase/server";
+import type { CitationChip } from "@/components/updates/DraftCard";
 
 export const instant = false;
 
@@ -29,12 +31,41 @@ export default async function IncidentPage({
 
   const building = incident.buildings as unknown as { slug: string; name: string };
 
-  const { data: messages } = await supabase
-    .from("messages")
-    .select("id, body, flat, created_at, residents!inner(name)")
-    .eq("building_id", incident.building_id)
-    .eq("incident_id", id)
-    .order("created_at", { ascending: true });
+  const [{ data: messages }, { data: drafts }, { data: sentUpdates }] =
+    await Promise.all([
+      supabase
+        .from("messages")
+        .select("id, body, flat, created_at, residents!inner(name)")
+        .eq("building_id", incident.building_id)
+        .eq("incident_id", id)
+        .order("created_at", { ascending: true }),
+      supabase
+        .from("updates")
+        .select("id, draft_text, citations, status")
+        .eq("incident_id", id)
+        .eq("status", "draft")
+        .order("created_at", { ascending: false })
+        .limit(1),
+      supabase
+        .from("updates")
+        .select("id, deliveries(id)")
+        .eq("incident_id", id)
+        .eq("status", "sent"),
+    ]);
+
+  const draftRow = drafts?.[0] ?? null;
+  const initialDraft = draftRow
+    ? {
+        id: draftRow.id,
+        draft_text: draftRow.draft_text,
+        citations: (draftRow.citations as CitationChip[]) ?? [],
+      }
+    : null;
+
+  const deliveryCount = (sentUpdates ?? []).reduce((sum, u) => {
+    const dels = u.deliveries as unknown as { id: string }[] | null;
+    return sum + (dels?.length ?? 0);
+  }, 0);
 
   return (
     <>
@@ -46,21 +77,36 @@ export default async function IncidentPage({
         >
           ← Back to inbox
         </Link>
-        <h1 className="mt-4 text-2xl font-semibold tracking-tight">{incident.title}</h1>
+        <h1 className="mt-4 text-2xl font-semibold tracking-tight">
+          {incident.title}
+        </h1>
         <p className="mt-1 text-sm text-muted">
           {building.name} · {incident.status} · {incident.category}
         </p>
-        <p className="mt-6 rounded-lg border border-dashed border-border bg-surface p-4 text-sm text-muted">
-          Draft + approve UI arrives in Phase 5.
-        </p>
-        <ul className="mt-6 space-y-3">
+
+        <IncidentActions
+          incidentId={incident.id}
+          status={incident.status}
+          initialDraft={initialDraft}
+          deliveryCount={deliveryCount}
+        />
+
+        <h2 className="mt-8 text-sm font-medium uppercase tracking-wide text-muted">
+          Reports
+        </h2>
+        <ul className="mt-3 space-y-3">
           {(messages ?? []).map((m) => {
             const resident = m.residents as unknown as
               | { name: string }
               | { name: string }[];
-            const name = Array.isArray(resident) ? resident[0]?.name : resident?.name;
+            const name = Array.isArray(resident)
+              ? resident[0]?.name
+              : resident?.name;
             return (
-              <li key={m.id} className="rounded-xl border border-border bg-surface p-4">
+              <li
+                key={m.id}
+                className="rounded-xl border border-border bg-surface p-4"
+              >
                 <p className="text-sm text-muted">
                   {name ?? "Resident"} · Flat {m.flat ?? "?"}
                 </p>
